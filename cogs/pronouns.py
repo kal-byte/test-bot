@@ -4,6 +4,7 @@ from bot import BigBoy
 from discord.ext import commands
 
 
+# https://pronoundb.org/docs
 pronouns = {
     "unspecified": "Unspecified",
     "hh": "he/him",
@@ -29,12 +30,16 @@ pronouns = {
 }
 
 
+# Custom exception, BadArgument *could* be used
+# but it makes less sense to.
 class UserNotRegistered(commands.CommandError):
     def __init__(self, member: discord.Member):
         message = f"{member.display_name} is not registered on <https://www.pronoundb.org/>"
         super().__init__(message)
 
 
+# This allows us to fetch people who aren't
+# in the same guild or in cache.
 class MemberID(discord.User):
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> t.Union[discord.Member, discord.User]:
@@ -56,6 +61,7 @@ class Pronouns(commands.Cog):
     def __init__(self, bot: BigBoy):
         self.bot: BigBoy = bot
 
+    # Basic error handler just for this cog.
     async def cog_command_error(self, ctx: commands.Context, error: Exception):
         if isinstance(error, UserNotRegistered):
             return await ctx.send(f"{error}")
@@ -66,13 +72,19 @@ class Pronouns(commands.Cog):
     @commands.command()
     async def pronouns(self, ctx: commands.Context, *, member: MemberID):
         """Gets the pronouns from a given user if they're registered on pronoundb.org."""
+        # Params for the URL, aiohttp takes care of all the sanitization and such.
         params = {"platform": "discord", "id": member.id}
+        # Base URL so we can actually make the request.
         url = "https://www.pronoundb.org/api/v1/lookup"
         async with self.bot.session.get(url, params=params) as resp:
+            # The API 404's if the user isn't found so we'll
+            # raise our custom exception.
             if resp.status == 404:
                 raise UserNotRegistered(member)
+            # Well we have it so we'll get the data.
             data = await resp.json()
 
+        # Here we just do basic conversion and then send the message.
         user_pronouns = pronouns.get(data["pronouns"])
         fmt = f"{member.display_name}'s pronouns are `{user_pronouns}`."
         await ctx.send(fmt)
