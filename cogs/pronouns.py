@@ -40,6 +40,7 @@ class UserNotRegistered(commands.CommandError):
 
 # This allows us to fetch people who aren't
 # in the same guild or in cache.
+# It subclasses User for typehinting purposes.
 class MemberID(discord.User):
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> t.Union[discord.Member, discord.User]:
