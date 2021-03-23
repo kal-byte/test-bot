@@ -60,6 +60,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command()
     async def pull(self, ctx: commands.Context):
+        """Just invokes the shell command with "git pull" and then invokes reload."""
         await self.shell(ctx, command="git pull")
         await self.reload(ctx)
 
