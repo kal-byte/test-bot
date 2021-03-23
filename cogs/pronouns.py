@@ -61,14 +61,6 @@ class Pronouns(commands.Cog):
     def __init__(self, bot: BigBoy):
         self.bot: BigBoy = bot
 
-    # Basic error handler just for this cog.
-    async def cog_command_error(self, ctx: commands.Context, error: Exception):
-        if isinstance(error, UserNotRegistered):
-            return await ctx.send(f"{error}")
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send(f"{error}")
-        return await super().cog_command_error(ctx, error)
-
     @commands.command()
     async def pronouns(self, ctx: commands.Context, *, member: MemberID):
         """Gets the pronouns from a given user if they're registered on pronoundb.org."""

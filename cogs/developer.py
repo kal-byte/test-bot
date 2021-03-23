@@ -59,6 +59,11 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
         await ctx.send(codeblock)
 
     @commands.command()
+    async def restart(self, _: commands.Context):
+        """Closes the bot. Let systemd restart it."""
+        await self.bot.close()
+
+    @commands.command()
     async def pull(self, ctx: commands.Context):
         """Just invokes the shell command with "git pull" and then invokes reload."""
         await self.shell(ctx, command="git pull")
