@@ -71,7 +71,8 @@ class Pronouns(commands.Cog):
 
         if result:
             row = await result.fetchone()
-            return row["pronouns"]
+            if row["pronouns"] is not None:
+                return row["pronouns"]
 
         # Params for the URL, aiohttp takes care of all the sanitization and such.
         params = {"platform": "discord", "id": member.id}
