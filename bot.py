@@ -1,4 +1,5 @@
 import config
+import asqlite
 import aiohttp
 import discord
 import typing as t
@@ -14,10 +15,12 @@ async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:
 
 class BigBoy(commands.Bot):
     session: aiohttp.ClientSession
+    db: asqlite.Connection
 
     def __init__(self, command_prefix: t.Union[t.Callable, t.Coroutine, str] = get_prefix, **kwargs):
         kwargs.setdefault("intents", discord.Intents.all())
         super().__init__(command_prefix, **kwargs)
+        self.db = self.loop.run_until_complete(asqlite.connect("db.db"))
         self.loop.create_task(self.__ainit__())
 
         for cog in extensions:
@@ -32,6 +35,8 @@ class BigBoy(commands.Bot):
             "User-Agent": "Testing Bot Python 3.9.2"
         }
         self.session = aiohttp.ClientSession(headers=headers)
+        with open("schema.sql") as fh:
+            await self.db.executescript(fh.read())
 
     async def on_ready(self):
         print("I'm ready.")
@@ -41,6 +46,8 @@ class BigBoy(commands.Bot):
         await self.invoke(ctx)
 
     async def close(self):
+        await self.db.commit()
+        await self.db.close()
         await self.session.close()
         return await super().close()
 
