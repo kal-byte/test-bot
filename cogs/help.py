@@ -41,7 +41,7 @@ class HelpCommand(commands.HelpCommand):
         await self.get_destination().send(embed=embed)
 
     async def send_group_help(self, group: commands.Group):
-        embed = discord.Embed(name=self.get_command_signature(group),
+        embed = discord.Embed(title=self.get_command_signature(group),
                               description=group.help or "No help provided...")
         for command in group.commands:
             embed.add_field(name=self.get_command_signature(command),
