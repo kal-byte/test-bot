@@ -90,6 +90,7 @@ class Pronouns(commands.Cog):
     @commands.group(invoke_without_command=True)
     async def pronouns(self, ctx: commands.Context, *, member: t.Optional[MemberID]):
         """Gets the pronouns from a given user if they're registered on pronoundb.org."""
+        member = member or ctx.author
         pnouns = await self.get_pronouns(member)
         user_pronouns = pronouns.get(pnouns)
         fmt = f"{member.display_name}'s pronouns are `{user_pronouns}`."
