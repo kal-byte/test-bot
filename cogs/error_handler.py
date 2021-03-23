@@ -11,7 +11,9 @@ class ErrorHandler(commands.Cog):
         )
         self.plain = (
             UserNotRegistered,
-            commands.BadArgument
+            commands.BadArgument,
+            commands.CheckFailure,
+            commands.NotOwner
         )
 
     @commands.Cog.listener()
