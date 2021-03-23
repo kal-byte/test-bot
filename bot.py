@@ -7,6 +7,10 @@ from discord.ext import commands
 
 
 extensions = ["cogs.pronouns", "cogs.developer", "cogs.error_handler"]
+description = (
+    "kal#1806's testing bot. With some features such as pronoun fetching etc\n"
+    "it's hardly complete and probably never will be, so uhh yeah."
+)
 
 
 async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:
@@ -19,6 +23,7 @@ class BigBoy(commands.Bot):
 
     def __init__(self, command_prefix: t.Union[t.Callable, t.Coroutine, str] = get_prefix, **kwargs):
         kwargs.setdefault("intents", discord.Intents.all())
+        kwargs.setdefault("description", description)
         super().__init__(command_prefix, **kwargs)
         self.db = self.loop.run_until_complete(asqlite.connect("db.db"))
         self.loop.create_task(self.__ainit__())
