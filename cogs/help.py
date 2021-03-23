@@ -11,6 +11,10 @@ class HelpCommand(commands.HelpCommand):
     def __init__(self, **options):
         super().__init__(**options)
 
+    def get_command_signature(self, command: commands.Command):
+        sig = super().get_command_signature(command)
+        return f"{self.clean_prefix}{command.qualified_name} {sig}"
+
     async def send_bot_help(self, mapping: bot_mapping):
         embed = discord.Embed()
 
@@ -36,12 +40,12 @@ class HelpCommand(commands.HelpCommand):
         await self.get_destination().send(embed=embed)
 
     async def send_command_help(self, command: commands.Command):
-        embed = discord.Embed(title=command.signature,
+        embed = discord.Embed(name=command.signature,
                               description=command.help or "No help provided...")
         await self.get_destination().send(embed=embed)
 
     async def send_group_help(self, group: commands.Group):
-        embed = discord.Embed(title=group.signature,
+        embed = discord.Embed(name=group.signature,
                               description=group.help or "No help provided...")
         for command in group.commands:
             embed.add_field(name=command.signature,
