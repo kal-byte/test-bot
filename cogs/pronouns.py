@@ -69,10 +69,8 @@ class Pronouns(commands.Cog):
         sql = "SELECT pronouns FROM users WHERE id = ?;"
         result = await self.bot.db.execute(sql, member.id)
 
-        if result:
-            row = await result.fetchone()
-            if row["pronouns"] is not None:
-                return row["pronouns"]
+        if result and (row := await result.fetchone()):
+            return row["pronouns"]
 
         # Params for the URL, aiohttp takes care of all the sanitization and such.
         params = {"platform": "discord", "id": member.id}
