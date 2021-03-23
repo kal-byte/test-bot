@@ -5,6 +5,9 @@ import typing as t
 from discord.ext import commands
 
 
+extensions = ["cogs.pronouns", "cogs.developer", "cogs.error_handler"]
+
+
 async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:
     return "=="
 
@@ -17,7 +20,7 @@ class BigBoy(commands.Bot):
         super().__init__(command_prefix, **kwargs)
         self.loop.create_task(self.__ainit__())
 
-        for cog in config.extensions:
+        for cog in extensions:
             try:
                 self.load_extension(cog)
             except Exception as err:
