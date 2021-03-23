@@ -101,8 +101,7 @@ class Pronouns(commands.Cog):
         """Set your pronouns in the bot database if you don't want to use pronoundb."""
         user_pronouns = pronouns.get(pnouns)
         if not user_pronouns:
-            pnoun_list = "\n".join(
-                f"{k:<11} -> {v}" for k, v in pronouns.items())
+            pnoun_list = "\n".join(f"{k:<11} -> {v}" for k, v in pronouns.items())  # nopep8
             fmt = ("Please make sure you select one from this list:\n"
                    f"```\n{pnoun_list}```")
             return await ctx.send(fmt)
