@@ -55,7 +55,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
     async def shell(self, ctx: commands.Context, *, command: str):
         """Runs a given command in the shell."""
         result = await run_shell(command)
-        codeblock = "```py\n" + result.decode("utf-8") + "```"
+        codeblock = "```sh\n" + result.decode("utf-8") + "```"
         await ctx.send(codeblock)
 
     @commands.command()
