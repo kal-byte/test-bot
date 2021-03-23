@@ -61,9 +61,11 @@ class Pronouns(commands.Cog):
     def __init__(self, bot: BigBoy):
         self.bot: BigBoy = bot
 
-    @commands.command()
-    async def pronouns(self, ctx: commands.Context, *, member: MemberID):
+    @commands.group(invoke_without_command=True)
+    async def pronouns(self, ctx: commands.Context, *, member: t.Optional[MemberID]):
         """Gets the pronouns from a given user if they're registered on pronoundb.org."""
+        # Since it's an optional argument we'll probably want to handle this.
+        member = member or ctx.author
         # Params for the URL, aiohttp takes care of all the sanitization and such.
         params = {"platform": "discord", "id": member.id}
         # Base URL so we can actually make the request.
@@ -80,6 +82,30 @@ class Pronouns(commands.Cog):
         user_pronouns = pronouns.get(data["pronouns"])
         fmt = f"{member.display_name}'s pronouns are `{user_pronouns}`."
         await ctx.send(fmt)
+
+    @pronouns.command(name="set")
+    async def pronouns_set(self, ctx: commands.Context, *, pnouns: str):
+        """Set your pronouns in the bot database if you don't want to use pronoundb."""
+        user_pronouns = pronouns.get(pnouns)
+        if not user_pronouns:
+            pnoun_list = "\n".join(
+                f"{k:<11} -> {v}" for k, v in pronouns.items())
+            fmt = ("Please make your you select one from this list:\n"
+                   f"```\n{pnoun_list}```")
+            return await ctx.send(fmt)
+
+        sql = ("INSERT INTO users(id, pronouns) VALUES(:1, :2) "
+               "ON CONFLICT (id) DO UPDATE SET pronouns = :2;")
+        values = {"1": ctx.author.id, "2": pnouns}
+        await self.bot.db.execute(sql, values)
+        await ctx.send("Okay, set your pronouns.")
+
+    @pronouns.command(name="reset")
+    async def pronouns_reset(self, ctx: commands.Context):
+        """Resets your pronouns in the bot database."""
+        sql = "UPDATE users SET pronouns = NULL WHERE id = ?;"
+        await self.bot.db.execute(sql, ctx.author.id)
+        await ctx.send("Reset your pronouns.")
 
 
 def setup(bot: BigBoy):
