@@ -1,10 +1,24 @@
 import io
+import asyncio
 import discord
 import textwrap
 import traceback
 import contextlib
 from bot import BigBoy
 from discord.ext import commands
+
+
+async def run_shell(command: str) -> bytes:
+    # https://docs.python.org/3/library/asyncio-subprocess.html
+    proc = await asyncio.create_subprocess_shell(
+        command,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+
+    stdout, stderr = await proc.communicate()
+
+    return stderr if stderr else stdout
 
 
 def get_code(codeblock: str):
@@ -36,6 +50,18 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
         # only people who are owners of this bot have access
         # to any command here.
         return await self.bot.is_owner(ctx.author)
+
+    @commands.command()
+    async def shell(self, ctx: commands.Context, *, command: str):
+        """Runs a given command in the shell."""
+        result = await run_shell(command)
+        codeblock = "```py\n" + result + "```"
+        await ctx.send(codeblock)
+
+    @commands.command()
+    async def pull(self, ctx: commands.Context):
+        await self.shell(ctx, command="git pull")
+        await self.reload(ctx)
 
     @commands.command()
     async def reload(self, ctx: commands.Context):
