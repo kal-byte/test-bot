@@ -61,11 +61,17 @@ class Pronouns(commands.Cog):
     def __init__(self, bot: BigBoy):
         self.bot: BigBoy = bot
 
-    @commands.group(invoke_without_command=True)
-    async def pronouns(self, ctx: commands.Context, *, member: t.Optional[MemberID]):
-        """Gets the pronouns from a given user if they're registered on pronoundb.org."""
-        # Since it's an optional argument we'll probably want to handle this.
-        member = member or ctx.author
+    async def get_pronouns(self, member: t.Union[discord.Member, discord.User]) -> t.Optional[str]:
+        """Simple method to get someones pronouns via the pronoundb or the bots db.
+        The order is:
+        - Check DB
+        - Check PronounDB"""
+        sql = "SELECT pronouns FROM users WHERE id = ?;"
+        result = await self.bot.db.execute(sql, member.id)
+
+        if result:
+            return result["pronouns"]
+
         # Params for the URL, aiohttp takes care of all the sanitization and such.
         params = {"platform": "discord", "id": member.id}
         # Base URL so we can actually make the request.
@@ -78,8 +84,13 @@ class Pronouns(commands.Cog):
             # Well we have it so we'll get the data.
             data = await resp.json()
 
-        # Here we just do basic conversion and then send the message.
-        user_pronouns = pronouns.get(data["pronouns"])
+        return data["pronouns"]
+
+    @commands.group(invoke_without_command=True)
+    async def pronouns(self, ctx: commands.Context, *, member: t.Optional[MemberID]):
+        """Gets the pronouns from a given user if they're registered on pronoundb.org."""
+        pnouns = await self.get_pronouns(member)
+        user_pronouns = pronouns.get(pnouns)
         fmt = f"{member.display_name}'s pronouns are `{user_pronouns}`."
         await ctx.send(fmt)
 
@@ -90,7 +101,7 @@ class Pronouns(commands.Cog):
         if not user_pronouns:
             pnoun_list = "\n".join(
                 f"{k:<11} -> {v}" for k, v in pronouns.items())
-            fmt = ("Please make your you select one from this list:\n"
+            fmt = ("Please make sure you select one from this list:\n"
                    f"```\n{pnoun_list}```")
             return await ctx.send(fmt)
 
