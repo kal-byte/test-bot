@@ -70,7 +70,8 @@ class Pronouns(commands.Cog):
         result = await self.bot.db.execute(sql, member.id)
 
         if result:
-            return result["pronouns"]
+            row = await result.fetchone()
+            return row["pronouns"]
 
         # Params for the URL, aiohttp takes care of all the sanitization and such.
         params = {"platform": "discord", "id": member.id}
