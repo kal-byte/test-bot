@@ -50,17 +50,18 @@ class Youtube(commands.Cog):
     async def yt_download(self, ctx: commands.Context, *, url: str):
         """Downloads a video from a given youtube link."""
         message = await ctx.send("Please wait whilst I download this video.")
-        try:
-            video = await download_video(url)
-        except RegexMatchError:
-            return await ctx.send("Invalid URL provided.")
-        embed = discord.Embed(title=video[1], description=video[2][:250])
-        embed.set_footer(text=f"{video[3]} Views")
-        file = discord.File(video[0], "video.mp4")
-        try:
-            await ctx.reply(file=file, embed=embed)
-        except discord.HTTPException:
-            return await ctx.send("Sorry, that file was too large.")
+        async with ctx.typing():
+            try:
+                video = await download_video(url)
+            except RegexMatchError:
+                return await ctx.send("Invalid URL provided.")
+            embed = discord.Embed(title=video[1], description=video[2][:250])
+            embed.set_footer(text=f"{video[3]} Views")
+            file = discord.File(video[0], "video.mp4")
+            try:
+                await ctx.reply(file=file, embed=embed)
+            except discord.HTTPException:
+                return await ctx.send("Sorry, that file was too large.")
         await message.delete()
 
     @youtube.command(name="info")
