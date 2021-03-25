@@ -9,7 +9,7 @@ class Context(commands.Context):
                          key=lambda e: e[0] == self.message.id)
 
         check_list = [
-            kwargs.get("files", []) != [],
+            not kwargs.get("files", []),
             not message,
             self.author.bot
         ]
