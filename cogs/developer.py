@@ -52,6 +52,14 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
         return await self.bot.is_owner(ctx.author)
 
     @commands.command()
+    async def latest_exc(self, ctx: commands.Context):
+        """Gets the latest error that was caught by the error handler."""
+        latest_tb = self.bot.latest_exception.__traceback__
+        formatted_tb = "".join(traceback.format_tb(latest_tb))
+        fmt = f"```py\n{formatted_tb}```"
+        await ctx.send(fmt)
+
+    @commands.command()
     async def shell(self, ctx: commands.Context, *, command: str):
         """Runs a given command in the shell."""
         result = await run_shell(command)
