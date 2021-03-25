@@ -7,7 +7,7 @@ from discord.ext import commands
 
 
 extensions = ["cogs.pronouns", "cogs.developer",
-              "cogs.error_handler", "cogs.help"]
+              "cogs.error_handler", "cogs.help", "cogs.youtube"]
 description = (
     "kal#1806's testing bot. With some features such as pronoun fetching etc\n"
     "it's hardly complete and probably never will be, so uhh yeah."

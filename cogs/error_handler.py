@@ -1,3 +1,4 @@
+import discord
 from bot import BigBoy
 from discord.ext import commands
 from .pronouns import UserNotRegistered
@@ -22,6 +23,8 @@ class ErrorHandler(commands.Cog):
             return
         if isinstance(error, self.plain):
             return await ctx.send(f"{error}")
+        if isinstance(error, discord.HTTPException):
+            return await ctx.send("Sorry, that file was too large.")
         raise error
 
 
