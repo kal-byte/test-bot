@@ -23,8 +23,6 @@ class ErrorHandler(commands.Cog):
             return
         if isinstance(error, self.plain):
             return await ctx.send(f"{error}")
-        if isinstance(error, discord.HTTPException):
-            return await ctx.send("Sorry, that file was too large.")
         self.bot.latest_exception = error
         await ctx.send("There was an error executing this command.")
         raise error

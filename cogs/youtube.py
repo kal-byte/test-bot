@@ -57,7 +57,10 @@ class Youtube(commands.Cog):
         embed = discord.Embed(title=video[1], description=video[2][:250])
         embed.set_footer(text=f"{video[3]} Views")
         file = discord.File(video[0], "video.mp4")
-        await ctx.reply(file=file, embed=embed)
+        try:
+            await ctx.reply(file=file, embed=embed)
+        except discord.HTTPException:
+            return await ctx.send("Sorry, that file was too large.")
         await message.delete()
 
     @youtube.command(name="info")
