@@ -18,6 +18,9 @@ class HelpCommand(commands.HelpCommand):
             if cog is None:
                 continue
 
+            if sum(1 for _ in cog.get_commands()) == 0:
+                continue
+
             embed.add_field(
                 name=cog.qualified_name,
                 value=f"{self.clean_prefix}help {cog.qualified_name}",
