@@ -3,7 +3,9 @@ import asqlite
 import aiohttp
 import discord
 import typing as t
+from collections import deque
 from discord.ext import commands
+from cogs.utils.context import Context
 
 
 extensions = ["cogs.pronouns", "cogs.developer",
@@ -22,11 +24,13 @@ class BigBoy(commands.Bot):
     session: aiohttp.ClientSession
     db: asqlite.Connection
     latest_exception: Exception
+    _edit_invoke: deque
 
     def __init__(self, command_prefix: t.Union[t.Callable, t.Coroutine, str] = get_prefix, **kwargs):
         kwargs.setdefault("intents", discord.Intents.all())
         kwargs.setdefault("description", description)
         super().__init__(command_prefix, **kwargs)
+        self._edit_invoke = deque(maxlen=5)
         self.db = self.loop.run_until_complete(asqlite.connect("db.db"))
         self.loop.create_task(self.__ainit__())
 
@@ -47,6 +51,12 @@ class BigBoy(commands.Bot):
 
     async def on_ready(self):
         print("I'm ready.")
+
+    async def get_context(self, message: discord.Message, *, cls: Context = None):
+        return await super().get_context(message, cls=Context)
+
+    async def on_message_edit(self, _: discord.Message, after: discord.Message):
+        await self.process_commands(after)
 
     async def process_commands(self, message: discord.Message):
         ctx = await self.get_context(message)
