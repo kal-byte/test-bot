@@ -49,7 +49,7 @@ class Youtube(commands.Cog):
     @youtube.command(name="download")
     async def yt_download(self, ctx: commands.Context, *, url: str):
         """Downloads a video from a given youtube link."""
-        message = await ctx.send("Please wait whilst I download this video.")
+        await ctx.send("Please wait whilst I download this video.")
         async with ctx.typing():
             try:
                 video = await download_video(url)
