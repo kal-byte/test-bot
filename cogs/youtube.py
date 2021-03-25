@@ -1,10 +1,8 @@
 import io
-import typing
 import discord
 from bot import BigBoy
 from cogs import utils
 from pytube import YouTube
-from datetime import datetime
 from discord.ext import commands
 
 
@@ -30,10 +28,11 @@ def video_info(url: str):
     thumbnail = yt.thumbnail_url
     watch_url = yt.watch_url
     vid_id = yt.video_id
+    publish_date = yt.publish_date
     return (
         title, description, views,
         author, thumbnail, watch_url,
-        vid_id
+        vid_id, publish_date
     )
 
 
@@ -65,6 +64,7 @@ class Youtube(commands.Cog):
         embed.set_footer(text=f"{info[2]} views | ID: {info[6]}")
         embed.set_image(url=info[4])
         embed.set_author(name=info[3])
+        embed.timestamp = info[7]
         await ctx.send(embed=embed)
 
 
