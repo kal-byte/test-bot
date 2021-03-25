@@ -153,44 +153,44 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
                     # to be able to access so we can actually
                     # return the result to the invoker.
                     res = await env["_eval_expr"]()
+
+            # If the a value is found in the stream
+            # then we'll send it to ctx.
+                if value := stream.getvalue():
+                    return await ctx.send(value)
+
+                # The result is None? return.
+                if not res:
+                    return
+
+                # If the result is an empty string,
+                # we'll just send a ZWS.
+                if res == "":
+                    return await ctx.send("\u200b")
+
+                # If the result is an discord.Embed,
+                # send to ctx as an embed.
+                if isinstance(res, discord.Embed):
+                    return await ctx.send(embed=res)
+
+                # If the result is a discord.File,
+                # send to ctx as a file.
+                elif isinstance(res, discord.File):
+                    return await ctx.send(file=res)
+
+                # If it's a str or an int then just
+                # send it normally.
+                elif isinstance(res, (str, int)):
+                    return await ctx.send(res)
+
+                # Else send the repr of it.
+                else:
+                    return await ctx.send(repr(res))
             except Exception:
                 # If it errored we'll send the traceback to ctx.
                 tb = traceback.format_exc()
                 fmt = f"```py\n{tb}```"
                 return await ctx.send(fmt)
-
-            # If the a value is found in the stream
-            # then we'll send it to ctx.
-            if value := stream.getvalue():
-                return await ctx.send(value)
-
-            # The result is None? return.
-            if not res:
-                return
-
-            # If the result is an empty string,
-            # we'll just send a ZWS.
-            if res == "":
-                return await ctx.send("\u200b")
-
-            # If the result is an discord.Embed,
-            # send to ctx as an embed.
-            if isinstance(res, discord.Embed):
-                return await ctx.send(embed=res)
-
-            # If the result is a discord.File,
-            # send to ctx as a file.
-            elif isinstance(res, discord.File):
-                return await ctx.send(file=res)
-
-            # If it's a str or an int then just
-            # send it normally.
-            elif isinstance(res, (str, int)):
-                return await ctx.send(res)
-
-            # Else send the repr of it.
-            else:
-                return await ctx.send(repr(res))
 
 
 def setup(bot: BigBoy):
