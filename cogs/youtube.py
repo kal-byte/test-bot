@@ -4,6 +4,7 @@ from bot import BigBoy
 from cogs import utils
 from pytube import YouTube
 from discord.ext import commands
+from pytube.exceptions import RegexMatchError
 
 
 @utils.to_thread
@@ -49,7 +50,10 @@ class Youtube(commands.Cog):
     async def yt_download(self, ctx: commands.Context, *, url: str):
         """Downloads a video from a given youtube link."""
         message = await ctx.send("Please wait whilst I download this video.")
-        video = await download_video(url)
+        try:
+            video = await download_video(url)
+        except RegexMatchError:
+            return await ctx.send("Invalid URL provided.")
         embed = discord.Embed(title=video[1], description=video[2][:250])
         embed.set_footer(text=f"{video[3]} Views")
         file = discord.File(video[0], "video.mp4")
@@ -59,7 +63,10 @@ class Youtube(commands.Cog):
     @youtube.command(name="info")
     async def yt_info(self, ctx: commands.Context, *, url: str):
         """Gets information on a given youtube video link."""
-        info = await video_info(url)
+        try:
+            info = await video_info(url)
+        except RegexMatchError:
+            return await ctx.send("Invalid URL provided.")
         embed = discord.Embed(title=info[0], description=info[1], url=info[5])
         embed.set_footer(text=f"{info[2]} views | ID: {info[6]}")
         embed.set_image(url=info[4])
