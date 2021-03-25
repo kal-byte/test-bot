@@ -10,7 +10,8 @@ class Context(commands.Context):
 
         check_list = [
             kwargs.get("files", []) != [],
-            not message
+            not message,
+            self.author.bot
         ]
 
         if message:

@@ -30,7 +30,7 @@ class BigBoy(commands.Bot):
         kwargs.setdefault("intents", discord.Intents.all())
         kwargs.setdefault("description", description)
         super().__init__(command_prefix, **kwargs)
-        self._edit_invoke = deque(maxlen=5)
+        self._edit_invoke = deque(maxlen=50)
         self.db = self.loop.run_until_complete(asqlite.connect("db.db"))
         self.loop.create_task(self.__ainit__())
 
