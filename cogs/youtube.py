@@ -57,7 +57,7 @@ class Youtube(commands.Cog):
                 return await ctx.send("Invalid URL provided.")
             embed = discord.Embed(title=video[1], description=video[2][:250])
             embed.set_footer(text=f"{video[3]} Views")
-            file = discord.File(video[0], "video.mp4")
+            file = discord.File(video[0], f"{video[1]}.mp4")
             try:
                 await ctx.reply(file=file, embed=embed)
             except discord.HTTPException:
