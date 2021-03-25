@@ -55,7 +55,9 @@ class BigBoy(commands.Bot):
     async def get_context(self, message: discord.Message, *, cls: Context = None):
         return await super().get_context(message, cls=Context)
 
-    async def on_message_edit(self, _: discord.Message, after: discord.Message):
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+        if before.content == after.content:
+            return
         await self.process_commands(after)
 
     async def process_commands(self, message: discord.Message):
