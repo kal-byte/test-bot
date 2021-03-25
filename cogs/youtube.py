@@ -3,12 +3,14 @@ import typing
 import discord
 from bot import BigBoy
 from cogs import utils
+from pytube import YouTube
+from datetime import datetime
 from discord.ext import commands
-from pytube import YouTube, Stream
 
 
 @utils.to_thread
-def download_video(url: str) -> io.BytesIO:
+def download_video(url: str):
+    url = url.strip("<>")
     yt = YouTube(url)
     buffer = io.BytesIO()
     stream = yt.streams.filter(resolution="720p")
@@ -17,13 +19,36 @@ def download_video(url: str) -> io.BytesIO:
     return buffer, yt.title, yt.description, yt.views
 
 
+@utils.to_thread
+def video_info(url: str):
+    url = url.strip("<>")
+    yt = YouTube(url)
+    title = yt.title
+    description = yt.description[:250]
+    views = yt.views
+    author = yt.author
+    thumbnail = yt.thumbnail_url
+    watch_url = yt.watch_url
+    vid_id = yt.video_id
+    return (
+        title, description, views,
+        author, thumbnail, watch_url,
+        vid_id
+    )
+
+
 class Youtube(commands.Cog):
     def __init__(self, bot: BigBoy):
         self.bot: BigBoy = bot
 
-    @commands.command()
-    async def download(self, ctx: commands.Context, *, url: str):
-        """Downloads a given youtube link."""
+    @commands.group(aliases=["yt"])
+    async def youtube(self, _: commands.Context):
+        """Base command for youtube."""
+        ...
+
+    @youtube.command(name="download")
+    async def yt_download(self, ctx: commands.Context, *, url: str):
+        """Downloads a video from a given youtube link."""
         message = await ctx.send("Please wait whilst I download this video.")
         video = await download_video(url)
         embed = discord.Embed(title=video[1], description=video[2][:250])
@@ -31,6 +56,16 @@ class Youtube(commands.Cog):
         file = discord.File(video[0], "video.mp4")
         await ctx.reply(file=file, embed=embed)
         await message.delete()
+
+    @youtube.command(name="info")
+    async def yt_info(self, ctx: commands.Context, *, url: str):
+        """Gets information on a given youtube video link."""
+        info = await video_info(url)
+        embed = discord.Embed(title=info[0], description=info[1], url=info[5])
+        embed.set_footer(text=f"{info[2]} views | ID: {info[6]}")
+        embed.set_image(url=info[4])
+        embed.set_author(name=info[3])
+        await ctx.send(embed=embed)
 
 
 def setup(bot: BigBoy):
