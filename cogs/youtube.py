@@ -61,7 +61,7 @@ class Youtube(commands.Cog):
             try:
                 await ctx.reply(file=file, embed=embed)
             except discord.HTTPException:
-                return await ctx.send("Sorry, that file was too large.")
+                return await ctx.send("Sorry, that file was too large or another issue appeared.")
 
     @youtube.command(name="info")
     async def yt_info(self, ctx: commands.Context, *, url: str):
