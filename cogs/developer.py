@@ -1,24 +1,11 @@
 import io
-import asyncio
 import discord
 import textwrap
 import traceback
 import contextlib
+from cogs import utils
 from bot import BigBoy
 from discord.ext import commands
-
-
-async def run_shell(command: str) -> bytes:
-    # https://docs.python.org/3/library/asyncio-subprocess.html
-    proc = await asyncio.create_subprocess_shell(
-        command,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-
-    stdout, stderr = await proc.communicate()
-
-    return stderr if stderr else stdout
 
 
 def get_code(codeblock: str):
@@ -61,7 +48,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command()
     async def shell(self, ctx: commands.Context, *, command: str):
         """Runs a given command in the shell."""
-        result = await run_shell(command)
+        result = await utils.run_shell(command)
         codeblock = "```sh\n" + result.decode("utf-8") + "```"
         await ctx.send(codeblock)
 
