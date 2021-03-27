@@ -1,4 +1,5 @@
 import discord
+import traceback
 from bot import BigBoy
 from discord.ext import commands
 from .pronouns import UserNotRegistered
@@ -23,7 +24,11 @@ class ErrorHandler(commands.Cog):
             return
         if isinstance(error, self.plain):
             return await ctx.send(f"{error}")
-        self.bot.latest_exception = error
+        latest_exception = [
+            f"Exception in command: '{ctx.command.qualified_name}'\n"]
+        latest_exception.append("".join(traceback.format_exception(type(error),
+                                                                   error, error.__traceback__)))
+        self.bot._last_exc = latest_exception
         await ctx.send("There was an error executing this command.")
         raise error
 

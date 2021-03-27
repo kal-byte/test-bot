@@ -54,9 +54,8 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command()
     async def latest_exc(self, ctx: commands.Context):
         """Gets the latest error that was caught by the error handler."""
-        latest_tb = self.bot.latest_exception.__traceback__
-        formatted_tb = "".join(traceback.format_tb(latest_tb))
-        fmt = f"```py\n{formatted_tb}```"
+        formatted_exc = "\n".join(self.bot._last_exc)
+        fmt = f"```py\n{formatted_exc}```"
         await ctx.send(fmt)
 
     @commands.command()

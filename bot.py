@@ -23,7 +23,7 @@ async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:
 class BigBoy(commands.Bot):
     session: aiohttp.ClientSession
     db: asqlite.Connection
-    latest_exception: Exception
+    _last_exc: str
     _edit_invoke: deque
 
     def __init__(self, command_prefix: t.Union[t.Callable, t.Coroutine, str] = get_prefix, **kwargs):
