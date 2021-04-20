@@ -17,7 +17,7 @@ description = (
 
 
 async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:
-    return "=="
+    return "==="
 
 
 class BigBoy(commands.Bot):
