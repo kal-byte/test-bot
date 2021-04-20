@@ -8,8 +8,13 @@ from discord.ext import commands
 from cogs.utils.context import Context
 
 
-extensions = ["cogs.pronouns", "cogs.developer",
-              "cogs.error_handler", "cogs.help", "cogs.youtube"]
+extensions = [
+    "cogs.pronouns",
+    "cogs.developer",
+    "cogs.error_handler",
+    "cogs.help",
+    "cogs.youtube",
+]
 description = (
     "kal#1806's testing bot. With some features such as pronoun fetching etc\n"
     "it's hardly complete and probably never will be, so uhh yeah."
@@ -17,7 +22,7 @@ description = (
 
 
 async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:
-    return "==="
+    return "=="
 
 
 class BigBoy(commands.Bot):
@@ -26,7 +31,11 @@ class BigBoy(commands.Bot):
     _last_exc: str
     _edit_invoke: deque
 
-    def __init__(self, command_prefix: t.Union[t.Callable, t.Coroutine, str] = get_prefix, **kwargs):
+    def __init__(
+        self,
+        command_prefix: t.Union[t.Callable, t.Coroutine, str] = get_prefix,
+        **kwargs,
+    ):
         kwargs.setdefault("intents", discord.Intents.all())
         kwargs.setdefault("description", description)
         super().__init__(command_prefix, **kwargs)
@@ -42,9 +51,7 @@ class BigBoy(commands.Bot):
 
     async def __ainit__(self):
         await self.wait_until_ready()
-        headers = {
-            "User-Agent": "Testing Bot Python 3.9.2"
-        }
+        headers = {"User-Agent": "Testing Bot Python 3.9.2"}
         self.session = aiohttp.ClientSession(headers=headers)
         with open("schema.sql") as fh:
             await self.db.executescript(fh.read())
