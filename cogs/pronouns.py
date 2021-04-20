@@ -26,7 +26,7 @@ pronouns = {
     "any": "Any pronouns",
     "other": "Other pronouns",
     "ask": "Ask me my pronouns",
-    "avoid": "Avoid pronouns, use my name"
+    "avoid": "Avoid pronouns, use my name",
 }
 
 
@@ -34,7 +34,9 @@ pronouns = {
 # but it makes less sense to.
 class UserNotRegistered(commands.CommandError):
     def __init__(self, member: discord.Member):
-        message = f"{member.display_name} is not registered on <https://www.pronoundb.org/>"
+        message = (
+            f"{member.display_name} is not registered on <https://www.pronoundb.org/>"
+        )
         super().__init__(message)
 
 
@@ -43,7 +45,9 @@ class UserNotRegistered(commands.CommandError):
 # It subclasses User for typehinting purposes.
 class MemberID(discord.User):
     @classmethod
-    async def convert(cls, ctx: commands.Context, arg: str) -> t.Union[discord.Member, discord.User]:
+    async def convert(
+        cls, ctx: commands.Context, arg: str
+    ) -> t.Union[discord.Member, discord.User]:
         try:
             member = await commands.MemberConverter().convert(ctx, arg)
         except commands.MemberNotFound:
@@ -62,7 +66,9 @@ class Pronouns(commands.Cog):
     def __init__(self, bot: BigBoy):
         self.bot: BigBoy = bot
 
-    async def get_pronouns(self, member: t.Union[discord.Member, discord.User]) -> t.Optional[str]:
+    async def get_pronouns(
+        self, member: t.Union[discord.Member, discord.User]
+    ) -> t.Optional[str]:
         """Simple method to get someones pronouns via the pronoundb or the bots db.
         The order is:
         - Check DB
@@ -101,13 +107,19 @@ class Pronouns(commands.Cog):
         """Set your pronouns in the bot database if you don't want to use pronoundb."""
         user_pronouns = pronouns.get(pnouns)
         if not user_pronouns:
-            pnoun_list = "\n".join(f"{k:<11} -> {v}" for k, v in pronouns.items())  # nopep8
-            fmt = ("Please make sure you select one from this list:\n"
-                   f"```\n{pnoun_list}```")
+            pnoun_list = "\n".join(
+                f"{k:<11} -> {v}" for k, v in pronouns.items()
+            )  # nopep8
+            fmt = (
+                "Please make sure you select one from this list:\n"
+                f"```\n{pnoun_list}```"
+            )
             return await ctx.send(fmt)
 
-        sql = ("INSERT INTO users(id, pronouns) VALUES(:1, :2) "
-               "ON CONFLICT (id) DO UPDATE SET pronouns = :2;")
+        sql = (
+            "INSERT INTO users(id, pronouns) VALUES(:1, :2) "
+            "ON CONFLICT (id) DO UPDATE SET pronouns = :2;"
+        )
         values = {"1": ctx.author.id, "2": pnouns}
         await self.bot.db.execute(sql, values)
         await ctx.send("Okay, set your pronouns.")

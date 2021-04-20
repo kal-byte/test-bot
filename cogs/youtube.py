@@ -31,9 +31,14 @@ def video_info(url: str):
     vid_id = yt.video_id
     publish_date = yt.publish_date
     return (
-        title, description, views,
-        author, thumbnail, watch_url,
-        vid_id, publish_date
+        title,
+        description,
+        views,
+        author,
+        thumbnail,
+        watch_url,
+        vid_id,
+        publish_date,
     )
 
 
@@ -61,7 +66,9 @@ class Youtube(commands.Cog):
             try:
                 await ctx.reply(file=file, embed=embed)
             except discord.HTTPException:
-                return await ctx.send("Sorry, that file was too large or another issue appeared.")
+                return await ctx.send(
+                    "Sorry, that file was too large or another issue appeared."
+                )
 
     @youtube.command(name="info")
     async def yt_info(self, ctx: commands.Context, *, url: str):

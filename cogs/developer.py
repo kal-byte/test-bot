@@ -113,10 +113,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
 
         # Actually make the block of code to evaluate. This is based on
         # what the user wrote so we just throw it into an async function.
-        block = (
-            "async def _eval_expr():\n" +
-            textwrap.indent(code, "  ")
-        )
+        block = "async def _eval_expr():\n" + textwrap.indent(code, "  ")
 
         # use StringIO since we'll need it to
         # redirect stdout later on.
@@ -140,8 +137,8 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
                     # return the result to the invoker.
                     res = await env["_eval_expr"]()
 
-            # If the a value is found in the stream
-            # then we'll send it to ctx.
+                # If the a value is found in the stream
+                # then we'll send it to ctx.
                 if value := stream.getvalue():
                     return await ctx.send(value)
 

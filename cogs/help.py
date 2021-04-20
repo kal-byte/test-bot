@@ -24,7 +24,7 @@ class HelpCommand(commands.HelpCommand):
             embed.add_field(
                 name=cog.qualified_name,
                 value=f"{self.clean_prefix}help {cog.qualified_name}",
-                inline=False
+                inline=False,
             )
 
         await self.get_destination().send(embed=embed)
@@ -32,24 +32,32 @@ class HelpCommand(commands.HelpCommand):
     async def send_cog_help(self, cog: commands.Cog):
         embed = discord.Embed(title=f"Help for {cog.qualified_name}")
         for command in cog.get_commands():
-            embed.add_field(name=self.get_command_signature(command),
-                            value=command.short_doc or "No help provided...",
-                            inline=False)
+            embed.add_field(
+                name=self.get_command_signature(command),
+                value=command.short_doc or "No help provided...",
+                inline=False,
+            )
 
         await self.get_destination().send(embed=embed)
 
     async def send_command_help(self, command: commands.Command):
-        embed = discord.Embed(name=self.get_command_signature(command),
-                              description=command.help or "No help provided...")
+        embed = discord.Embed(
+            name=self.get_command_signature(command),
+            description=command.help or "No help provided...",
+        )
         await self.get_destination().send(embed=embed)
 
     async def send_group_help(self, group: commands.Group):
-        embed = discord.Embed(title=self.get_command_signature(group),
-                              description=group.help or "No help provided...")
+        embed = discord.Embed(
+            title=self.get_command_signature(group),
+            description=group.help or "No help provided...",
+        )
         for command in group.commands:
-            embed.add_field(name=self.get_command_signature(command),
-                            value=command.short_doc or "No help provided...",
-                            inline=False)
+            embed.add_field(
+                name=self.get_command_signature(command),
+                value=command.short_doc or "No help provided...",
+                inline=False,
+            )
         await self.get_destination().send(embed=embed)
 
 
